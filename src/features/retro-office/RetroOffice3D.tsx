@@ -2570,7 +2570,7 @@ export function RetroOffice3D({
   githubSkill = null,
   taskManagerEnabled = false,
   soundhermesEnabled = false,
-  officeTitle = "Luke Headquarters",
+  officeTitle = "Rifqi Headquarters",
   officeTitleLoaded = false,
   remoteOfficeEnabled = false,
   remoteOfficeSourceKind = "presence_endpoint",

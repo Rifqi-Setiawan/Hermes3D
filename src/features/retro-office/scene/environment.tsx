@@ -68,6 +68,27 @@ function FramedPicture({
   );
 }
 
+function IndonesiaFlagArt() {
+  const flagWidth = 0.52;
+  const flagHeight = 0.3;
+  const stripeHeight = flagHeight / 2;
+
+  return (
+    <>
+      {/* Top half: Red */}
+      <mesh position={[0, stripeHeight / 2, 0]}>
+        <planeGeometry args={[flagWidth, stripeHeight]} />
+        <meshBasicMaterial color="#e70011" side={2} />
+      </mesh>
+      {/* Bottom half: White */}
+      <mesh position={[0, -stripeHeight / 2, 0]}>
+        <planeGeometry args={[flagWidth, stripeHeight]} />
+        <meshBasicMaterial color="#ffffff" side={2} />
+      </mesh>
+    </>
+  );
+}
+
 function UsaFlagArt() {
   const flagWidth = 0.52;
   const flagHeight = 0.3;
@@ -814,7 +835,7 @@ export const WallPictures = memo(function WallPictures({
       <OfficeFlagPole
         position={localFlagPolePosition}
         rotY={0.32}
-        art={<UsaFlagArt />}
+        art={<IndonesiaFlagArt />}
       />
       {showRemoteOffice ? (
         <OfficeFlagPole

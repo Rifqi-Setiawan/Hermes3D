@@ -10,30 +10,111 @@ const MODELS = [{ id: "demo/mock-office", name: "Mock Office", provider: "demo" 
 
 const agents = new Map([
   [
-    "demo-orchestrator",
+    "jarvis",
     {
-      id: "demo-orchestrator",
-      name: "Avery",
-      role: "Orchestrator",
-      workspace: "/demo/orchestrator",
+      id: "jarvis",
+      name: "Jarvis",
+      role: "Chief Orchestrator",
+      workspace: "/srv/apps/hermes/profiles/jarvis",
     },
   ],
   [
-    "demo-researcher",
+    "daedalus",
     {
-      id: "demo-researcher",
-      name: "Mika",
-      role: "Research",
-      workspace: "/demo/research",
+      id: "daedalus",
+      name: "Daedalus",
+      role: "Principal Systems Architect",
+      workspace: "/srv/apps/hermes/profiles/daedalus",
     },
   ],
   [
-    "demo-builder",
+    "oracle",
     {
-      id: "demo-builder",
-      name: "Rune",
-      role: "Builder",
-      workspace: "/demo/builder",
+      id: "oracle",
+      name: "Oracle",
+      role: "Research Scientist",
+      workspace: "/srv/apps/hermes/profiles/oracle",
+    },
+  ],
+  [
+    "forge",
+    {
+      id: "forge",
+      name: "Forge",
+      role: "Backend Engineer",
+      workspace: "/srv/apps/hermes/profiles/forge",
+    },
+  ],
+  [
+    "prism",
+    {
+      id: "prism",
+      name: "Prism",
+      role: "Frontend Engineer",
+      workspace: "/srv/apps/hermes/profiles/prism",
+    },
+  ],
+  [
+    "sentinel",
+    {
+      id: "sentinel",
+      name: "Sentinel",
+      role: "Independent QA",
+      workspace: "/srv/apps/hermes/profiles/sentinel",
+    },
+  ],
+  [
+    "vector",
+    {
+      id: "vector",
+      name: "Vector",
+      role: "Data & Lakehouse",
+      workspace: "/srv/apps/hermes/profiles/vector",
+    },
+  ],
+  [
+    "bastion",
+    {
+      id: "bastion",
+      name: "Bastion",
+      role: "SRE & DevOps",
+      workspace: "/srv/apps/hermes/profiles/bastion",
+    },
+  ],
+  [
+    "relay",
+    {
+      id: "relay",
+      name: "Relay",
+      role: "Release PIC",
+      workspace: "/srv/apps/hermes/profiles/relay",
+    },
+  ],
+  [
+    "nova",
+    {
+      id: "nova",
+      name: "Nova",
+      role: "General SWE",
+      workspace: "/srv/apps/hermes/profiles/nova",
+    },
+  ],
+  [
+    "muse",
+    {
+      id: "muse",
+      name: "Muse",
+      role: "UI/UX Designer",
+      workspace: "/srv/apps/hermes/profiles/muse",
+    },
+  ],
+  [
+    "merlin",
+    {
+      id: "merlin",
+      name: "Merlin",
+      role: "Tech Mentor",
+      workspace: "/srv/apps/hermes/profiles/merlin",
     },
   ],
 ]);
@@ -120,7 +201,7 @@ async function handleMethod(method, params, id, sendEvent) {
 
   switch (method) {
     case "agents.list":
-      return resOk(id, { defaultId: "demo-orchestrator", mainKey: MAIN_KEY, agents: agentListPayload() });
+      return resOk(id, { defaultId: "jarvis", mainKey: MAIN_KEY, agents: agentListPayload() });
 
     case "agents.create": {
       const name = typeof p.name === "string" && p.name.trim() ? p.name.trim() : "Demo Agent";
@@ -152,7 +233,7 @@ async function handleMethod(method, params, id, sendEvent) {
 
     case "agents.delete": {
       const agentId = typeof p.agentId === "string" ? p.agentId.trim() : "";
-      if (agentId && agents.has(agentId) && agentId !== "demo-orchestrator") {
+      if (agentId && agents.has(agentId) && agentId !== "jarvis") {
         agents.delete(agentId);
         clearHistory(sessionKeyFor(agentId));
       }
@@ -160,13 +241,13 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "agents.files.get": {
-      const key = `${p.agentId || "demo-orchestrator"}/${p.name || ""}`;
+      const key = `${p.agentId || "jarvis"}/${p.name || ""}`;
       const content = files.get(key);
       return resOk(id, { file: content !== undefined ? { content } : { missing: true } });
     }
 
     case "agents.files.set": {
-      const key = `${p.agentId || "demo-orchestrator"}/${p.name || ""}`;
+      const key = `${p.agentId || "jarvis"}/${p.name || ""}`;
       files.set(key, typeof p.content === "string" ? p.content : "");
       return resOk(id, {});
     }
@@ -247,7 +328,7 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "sessions.patch": {
-      const key = typeof p.key === "string" ? p.key : sessionKeyFor("demo-orchestrator");
+      const key = typeof p.key === "string" ? p.key : sessionKeyFor("jarvis");
       const current = sessionSettings.get(key) || {};
       const next = { ...current };
       if (p.model !== undefined) next.model = p.model;
@@ -262,15 +343,15 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "sessions.reset": {
-      const key = typeof p.key === "string" ? p.key : sessionKeyFor("demo-orchestrator");
+      const key = typeof p.key === "string" ? p.key : sessionKeyFor("jarvis");
       clearHistory(key);
       return resOk(id, { ok: true });
     }
 
     case "chat.send": {
-      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("demo-orchestrator");
-      const agentId = sessionKey.startsWith("agent:") ? sessionKey.split(":")[1] : "demo-orchestrator";
-      const agent = agents.get(agentId) || agents.get("demo-orchestrator");
+      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("jarvis");
+      const agentId = sessionKey.startsWith("agent:") ? sessionKey.split(":")[1] : "jarvis";
+      const agent = agents.get(agentId) || agents.get("jarvis");
       const message = typeof p.message === "string" ? p.message.trim() : String(p.message || "").trim();
       const runId = typeof p.idempotencyKey === "string" && p.idempotencyKey ? p.idempotencyKey : randomId();
       if (!message) return resOk(id, { status: "no-op", runId });
@@ -358,7 +439,7 @@ async function handleMethod(method, params, id, sendEvent) {
     }
 
     case "chat.history": {
-      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("demo-orchestrator");
+      const sessionKey = typeof p.sessionKey === "string" ? p.sessionKey : sessionKeyFor("jarvis");
       return resOk(id, { sessionKey, messages: getHistory(sessionKey) });
     }
 
@@ -479,9 +560,9 @@ function startAdapter() {
                 agents: [...agents.values()].map((agent) => ({
                   agentId: agent.id,
                   name: agent.name,
-                  isDefault: agent.id === "demo-orchestrator",
+                  isDefault: agent.id === "jarvis",
                 })),
-                defaultAgentId: "demo-orchestrator",
+                defaultAgentId: "jarvis",
               },
               sessionDefaults: { mainKey: MAIN_KEY },
             },
